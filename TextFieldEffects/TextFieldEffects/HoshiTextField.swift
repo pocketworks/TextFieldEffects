@@ -46,6 +46,12 @@ import UIKit
         }
     }
     
+    @IBInspectable dynamic public var activePlaceholderColor: UIColor = .blackColor() {
+        didSet {
+            updatePlaceholder()
+        }
+    }
+    
     /**
      The scale of the placeholder font.
      
@@ -107,8 +113,10 @@ import UIKit
         placeholderLabel.frame.origin = activePlaceholderPoint
         
         UIView.animateWithDuration(0.2, animations: {
-            self.placeholderLabel.alpha = 0.5
+            self.placeholderLabel.alpha = 1
         })
+        
+        self.placeholderLabel.highlighted = true
         
         activeBorderLayer.frame = rectForBorder(borderThickness.active, isFilled: true)
     }
@@ -121,9 +129,10 @@ import UIKit
             }), completion: { _ in
                 self.animationCompletionHandler?(type: .TextDisplay)
             })
-            
-            self.activeBorderLayer.frame = self.rectForBorder(self.borderThickness.active, isFilled: false)
         }
+        
+        self.placeholderLabel.highlighted = false
+        self.activeBorderLayer.frame = self.rectForBorder(self.borderThickness.active, isFilled: false)
     }
     
     // MARK: - Private
@@ -139,6 +148,7 @@ import UIKit
     private func updatePlaceholder() {
         placeholderLabel.text = placeholder
         placeholderLabel.textColor = placeholderColor
+        placeholderLabel.highlightedTextColor = activePlaceholderColor
         placeholderLabel.sizeToFit()
         layoutPlaceholderInTextRect()
         
@@ -171,9 +181,9 @@ import UIKit
         default:
             break
         }
-        placeholderLabel.frame = CGRect(x: originX, y: textRect.height/2,
+        placeholderLabel.frame = CGRect(x: originX, y: textRect.height/3,
             width: placeholderLabel.bounds.width, height: placeholderLabel.bounds.height)
-        activePlaceholderPoint = CGPoint(x: placeholderLabel.frame.origin.x, y: placeholderLabel.frame.origin.y - placeholderLabel.frame.size.height - placeholderInsets.y)
+        activePlaceholderPoint = CGPoint(x: placeholderLabel.frame.origin.x, y: placeholderLabel.frame.origin.y - placeholderLabel.frame.size.height)
 
     }
     
