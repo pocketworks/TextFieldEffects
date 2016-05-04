@@ -62,6 +62,13 @@ import UIKit
             updatePlaceholder()
         }
     }
+    
+    
+    @IBInspectable dynamic public var activePlaceholderFontScale: CGFloat = 0.7 {
+        didSet {
+            updatePlaceholder()
+        }
+    }
 
     override public var placeholder: String? {
         didSet {
@@ -117,6 +124,7 @@ import UIKit
         })
         
         self.placeholderLabel.highlighted = true
+        self.placeholderLabel.font = activePlaceholderFontFromFont(font!)
         
         activeBorderLayer.frame = rectForBorder(borderThickness.active, isFilled: true)
     }
@@ -126,9 +134,12 @@ import UIKit
             UIView.animateWithDuration(0.35, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 2.0, options: UIViewAnimationOptions.BeginFromCurrentState, animations: ({
                 self.layoutPlaceholderInTextRect()
                 self.placeholderLabel.alpha = 1
+                self.placeholderLabel.font = self.placeholderFontFromFont(self.font!)
             }), completion: { _ in
                 self.animationCompletionHandler?(type: .TextDisplay)
             })
+        } else {
+            self.placeholderLabel.font = activePlaceholderFontFromFont(font!)
         }
         
         self.placeholderLabel.highlighted = false
@@ -159,6 +170,11 @@ import UIKit
     
     private func placeholderFontFromFont(font: UIFont) -> UIFont! {
         let smallerFont = UIFont(name: font.fontName, size: font.pointSize * placeholderFontScale)
+        return smallerFont
+    }
+    
+    private func activePlaceholderFontFromFont(font: UIFont) -> UIFont! {
+        let smallerFont = UIFont(name: font.fontName, size: font.pointSize * activePlaceholderFontScale)
         return smallerFont
     }
     
