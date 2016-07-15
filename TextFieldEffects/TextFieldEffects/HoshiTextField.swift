@@ -24,6 +24,12 @@ import UIKit
     }
   }
   
+  @IBInspectable dynamic public var textFieldYInset: CGFloat = 12 {
+    didSet {
+      updatePlaceholder()
+    }
+  }
+  
   /**
    The color of the border when it has content.
    
@@ -85,7 +91,7 @@ import UIKit
   
   private let borderThickness: (active: CGFloat, inactive: CGFloat) = (active: 2, inactive: 0.5)
   private let placeholderInsets = CGPoint(x: 0, y: 6)
-  private let textFieldInsets = CGPoint(x: 0, y: 12)
+  private var textFieldInsets = CGPoint(x: 0, y: 12)
   private let inactiveBorderLayer = CALayer()
   private let activeBorderLayer = CALayer()
   private var activePlaceholderPoint: CGPoint = CGPointZero
@@ -112,7 +118,7 @@ import UIKit
         self.placeholderLabel.frame.origin = CGPoint(x: 10, y: self.placeholderLabel.frame.origin.y)
         self.placeholderLabel.alpha = 0
       }), completion: { _ in
-//        self.animationCompletionHandler?(type: .TextEntry)
+        //        self.animationCompletionHandler?(type: .TextEntry)
       })
     }
     
@@ -136,7 +142,7 @@ import UIKit
         self.placeholderLabel.alpha = 1
         self.placeholderLabel.font = self.placeholderFontFromFont(self.font!)
       }), completion: { _ in
-//        self.animationCompletionHandler?(type: .TextDisplay)
+        //        self.animationCompletionHandler?(type: .TextDisplay)
       })
     } else {
       self.placeholderLabel.font = activePlaceholderFontFromFont(font!)
@@ -157,6 +163,8 @@ import UIKit
   }
   
   private func updatePlaceholder() {
+    textFieldInsets = CGPoint(x: 0, y: self.textFieldYInset)
+    
     placeholderLabel.text = placeholder
     placeholderLabel.textColor = placeholderColor
     placeholderLabel.highlightedTextColor = activePlaceholderColor
@@ -198,7 +206,7 @@ import UIKit
       break
     }
     placeholderLabel.frame = CGRect(x: originX, y: textRect.height/3,
-      width: placeholderLabel.bounds.width, height: placeholderLabel.bounds.height)
+                                    width: placeholderLabel.bounds.width, height: placeholderLabel.bounds.height)
     activePlaceholderPoint = CGPoint(x: placeholderLabel.frame.origin.x, y: placeholderLabel.frame.origin.y - placeholderLabel.frame.size.height)
     
   }
@@ -206,11 +214,15 @@ import UIKit
   // MARK: - Overrides
   
   override public func editingRectForBounds(bounds: CGRect) -> CGRect {
-    return CGRectOffset(bounds, textFieldInsets.x, textFieldInsets.y)
+    var rect = CGRectOffset(bounds, textFieldInsets.x, textFieldInsets.y)
+    rect.size.width -= (self.rightView?.bounds.size.width ?? 0)
+    return rect
   }
   
   override public func textRectForBounds(bounds: CGRect) -> CGRect {
-    return CGRectOffset(bounds, textFieldInsets.x, textFieldInsets.y)
+    var rect = CGRectOffset(bounds, textFieldInsets.x, textFieldInsets.y)
+    rect.size.width -= (self.rightView?.bounds.size.width ?? 0)
+    return rect
   }
   
 }
